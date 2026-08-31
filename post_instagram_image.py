@@ -60,28 +60,25 @@ def post_image(driver, image_path, caption="", timeout=15):
             EC.element_to_be_clickable((By.CSS_SELECTOR, "[aria-label='New post']"))
         )
         create_button.click()
-        dismiss_notifications_popup(driver)
     except Exception:
         # Fallback: the creation flow may appear as a different control.
+        print("Falling back for create button...")
         new_post = wait.until(
             EC.element_to_be_clickable((By.XPATH, "//*[contains(text(), 'New post')]"))
         )
         new_post.click()
-        dismiss_notifications_popup(driver)
 
     # Locate the hidden file input and feed it the image path.
     file_input = file_wait.until(
         EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='file']"))
     )
     file_input.send_keys(image_path)
-    dismiss_notifications_popup(driver)
 
     # Step through the creation modal: Next -> Next -> caption -> Share.
     next_button = wait.until(
         EC.element_to_be_clickable((By.XPATH, "//div[contains(text(), 'Next')]"))
     )
     next_button.click()
-    dismiss_notifications_popup(driver)
 
     # On some versions a final "Next" appears before the caption editor.
     try:
@@ -89,7 +86,6 @@ def post_image(driver, image_path, caption="", timeout=15):
             EC.element_to_be_clickable((By.XPATH, "//div[contains(text(), 'Next')]"))
         )
         next_button.click()
-        dismiss_notifications_popup(driver)
     except Exception:
         pass
 
@@ -97,13 +93,11 @@ def post_image(driver, image_path, caption="", timeout=15):
         EC.presence_of_element_located((By.CSS_SELECTOR, "[aria-label='Write a caption...']"))
     )
     caption_box.send_keys(caption)
-    dismiss_notifications_popup(driver)
 
     share_button = wait.until(
         EC.element_to_be_clickable((By.XPATH, "//div[contains(text(), 'Share')]"))
     )
     share_button.click()
-    dismiss_notifications_popup(driver)
 
     # Wait for confirmation that the post was shared.
     wait.until(
